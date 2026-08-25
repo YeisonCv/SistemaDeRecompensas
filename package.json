@@ -1,0 +1,19 @@
+{
+  "name": "rewards_sistem",
+  "version": "1.0.0",
+  "description": "Proyecto universitario sobre un sistema de recompensas implementando cosas que nos han enseñado",
+  "license": "MIT",
+  "author": "yeison correa velasquez",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
