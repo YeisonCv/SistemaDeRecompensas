@@ -115,11 +115,11 @@ test.describe('API — Sistema de Recompensas', () => {
 
         const body = await response.json();
 
-        // Validamos puntos ganados: 1 punto por cada $10 → floor(350/10) = 35
-        expect(body.pointsEarned).toBe(35);
+        // Validamos puntos ganados: 1 punto por cada $1.000 → floor(3500/1000) = 3
+        expect(body.pointsEarned).toBe(3);
 
-        // Validamos puntos totales: 100 iniciales + 35 ganados = 135
-        expect(body.totalPoints).toBe(135);
+        // Validamos puntos totales: 100 iniciales + 3 ganados = 103
+        expect(body.totalPoints).toBe(103);
 
         // Validamos que la compra tenga el producto enviado
         expect(body.purchase.product).toBe('Teclado');

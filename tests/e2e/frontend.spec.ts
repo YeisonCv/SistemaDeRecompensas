@@ -60,14 +60,14 @@ test.describe('Frontend — Sistema de Recompensas', () => {
         await expect(page.locator('#customer-points')).toHaveText('100');
 
         await page.getByLabel('Producto').fill('Auriculares');
-        await page.getByLabel('Valor ($)').fill('200');
+        await page.getByLabel('Valor ($)').fill('2000');
         await page.getByRole('button', { name: 'Registrar compra' }).click();
 
-        // Validamos mensaje de éxito con los puntos ganados (200/10 = 20)
-        await expect(page.locator('#message')).toContainText('Ganaste 20 puntos');
+        // Validamos mensaje de éxito con los puntos ganados (2000/1000 = 2)
+        await expect(page.locator('#message')).toContainText('Ganaste 2 puntos');
 
-        // Validamos que los puntos se actualicen en pantalla (100 + 20 = 120)
-        await expect(page.locator('#customer-points')).toHaveText('120');
+        // Validamos que los puntos se actualicen en pantalla (100 + 2 = 102)
+        await expect(page.locator('#customer-points')).toHaveText('102');
 
         // Validamos que la nueva compra aparezca en la tabla
         await expect(page.getByRole('cell', { name: 'Auriculares' })).toBeVisible();

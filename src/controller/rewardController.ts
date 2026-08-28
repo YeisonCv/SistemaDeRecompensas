@@ -89,12 +89,15 @@ async function registerPurchanseController(
     req: Request,
     res: Response
 ): Promise<void> {
-
     try {
-
         const document = req.params.document as string;
-
         const { product, value } = req.body;
+
+        console.log('PURCHASE DEBUG:', {
+            product,
+            value,
+            type: typeof value
+        });
 
         const purchase = await registerPurchase(
             document,
@@ -103,15 +106,12 @@ async function registerPurchanseController(
         );
 
         res.status(200).json(purchase);
-
     } catch (error) {
-
         res.status(400).json({
             error: error instanceof Error
                 ? error.message
                 : 'Error desconocido'
         });
-
     }
 }
 
