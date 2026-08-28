@@ -200,3 +200,4 @@ async function handleRefresh() {
 elements.searchForm.addEventListener('submit', handleSearch);
 elements.purchaseForm.addEventListener('submit', handlePurchase);
 elements.refreshBtn.addEventListener('click', handleRefresh);
+//prueba
