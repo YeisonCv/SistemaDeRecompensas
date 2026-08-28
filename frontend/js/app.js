@@ -18,6 +18,19 @@ const purchaseForm = document.getElementById('purchaseForm');
 const purchaseMessage = document.getElementById('purchaseMessage');
 
 const purchaseList = document.getElementById('purchaseList');
+const redemptionHistorySection = document.getElementById(
+    'redemptionHistorySection'
+);
+
+const redemptionList = document.getElementById('redemptionList');
+
+const redeemSection = document.getElementById('redeemSection');
+
+const redeemForm = document.getElementById('redeemForm');
+
+const redeemPointsInput = document.getElementById('redeemPoints');
+
+const redeemMessage = document.getElementById('redeemMessage');
 
 // Buscar cliente por documento
 searchButton.addEventListener('click', searchCustomer);
@@ -50,8 +63,8 @@ async function searchCustomer() {
         displayCustomer(customer);
 
         await loadPoints(documentNumber);
-
         await loadPurchases(documentNumber);
+        await loadRedemptions(documentNumber);
 
         searchMessage.textContent = '';
 
@@ -60,6 +73,8 @@ async function searchCustomer() {
         customerSection.style.display = 'none';
         purchaseSection.style.display = 'none';
         historySection.style.display = 'none';
+        redeemSection.style.display = 'none';
+        redemptionHistorySection.style.display = 'none';
 
         searchMessage.textContent = error.message;
 
@@ -72,6 +87,8 @@ function displayCustomer(customer) {
     customerSection.style.display = 'block';
     purchaseSection.style.display = 'block';
     historySection.style.display = 'block';
+    redeemSection.style.display = 'block';
+    redemptionHistorySection.style.display = 'block';
 
     customerName.textContent = customer.name;
     customerDocument.textContent = customer.document;
@@ -108,6 +125,83 @@ async function loadPurchases(documentNumber) {
     const purchases = await response.json();
 
     displayPurchases(purchases);
+}
+
+async function loadRedemptions(documentNumber) {
+    const response = await fetch(
+        `${API_URL}/rewards/customer/${documentNumber}/redemptions`
+    );
+
+    if (!response.ok) {
+        throw new Error('Could not load redemptions');
+    }
+
+    const redemptions = await response.json();
+
+    displayRedemptions(redemptions);
+}
+
+//mostrar redenciones
+function displayRedemptions(redemptions) {
+
+    redemptionList.innerHTML = '';
+
+    if (redemptions.length === 0) {
+
+        redemptionList.innerHTML =
+            '<p>No redemptions registered.</p>';
+
+        return;
+    }
+
+    redemptions.forEach(redemption => {
+
+        const item = document.createElement('div');
+
+        item.classList.add('redemption-item');
+
+        item.innerHTML = `
+            <strong>Points Redeemed: ${redemption.points_used}</strong>
+            <span>Value: $${redemption.redeemed_value}</span>
+            <br>
+            <span>Date: ${redemption.date}</span>
+        `;
+
+        redemptionList.appendChild(item);
+
+    });
+}
+
+function displayRedemptions(redemptions) {
+    redemptionList.innerHTML = '';
+
+    if (redemptions.length === 0) {
+        redemptionList.innerHTML =
+            '<p>No redemptions registered.</p>';
+        return;
+    }
+
+    redemptions.forEach(redemption => {
+        const item = document.createElement('div');
+
+        item.classList.add('redemption-item');
+
+        item.innerHTML = `
+            <strong>Points redeemed: ${redemption.points_used}</strong>
+
+            <span>
+                Value: $${redemption.redeemed_value}
+            </span>
+
+            <br>
+
+            <span>
+                Date: ${redemption.date}
+            </span>
+        `;
+
+        redemptionList.appendChild(item);
+    });
 }
 
 //mostrar compras
@@ -208,5 +302,65 @@ async function registerPurchase(event) {
         purchaseMessage.textContent =
             error.message;
 
+    }
+}
+
+// Redeem points
+
+redeemForm.addEventListener(
+    'submit',
+    redeemCustomerPoints
+);
+
+async function redeemCustomerPoints(event) {
+    event.preventDefault();
+
+    const documentNumber = documentInput.value.trim();
+
+    const points = Number(
+        redeemPointsInput.value
+    );
+
+    if (!documentNumber) {
+        redeemMessage.textContent =
+            'Please search for a customer first.';
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `${API_URL}/rewards/customer/${documentNumber}/redeem`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    points
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.error || 'Could not redeem points'
+            );
+        }
+
+        redeemMessage.textContent =
+            `Points redeemed successfully! You received $${data.valueRedeemed}.`;
+
+        customerPoints.textContent =
+            data.remainingPoints;
+
+        redeemForm.reset();
+
+        await loadRedemptions(documentNumber);
+
+    } catch (error) {
+        redeemMessage.textContent =
+            error.message;
     }
 }

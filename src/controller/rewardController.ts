@@ -4,7 +4,9 @@ import {
     getCustomer,
     getPoints,
     registerPurchase,
-    getPurchases
+    getPurchases,
+    getRedemptions,
+    redeemPoints
 } from '../service/rewardService';
 
 async function getCustomercontroller(
@@ -67,20 +69,61 @@ async function registerPurchanseController(
     req: Request,
     res: Response
 ): Promise<void> {
-    try{
-    const { document, product, value } = req.body;
+    try {
+        const document = req.params.document as string;
+        const { product, value } = req.body;
 
-    const purchase = await registerPurchase(
-        document, 
-        product, 
-        value
-    );
-    res.status(200).json(purchase);
+        const purchase = await registerPurchase(
+            document,
+            product,
+            value
+        );
+
+        res.status(200).json(purchase);
     } catch (error) {
-        res.status(400).json({ 
-            error: error instanceof Error 
-            ? error.message 
+        res.status(400).json({
+            error: error instanceof Error
+                ? error.message
+                : 'Unknown error'
+        });
+    }
+}
+
+async function redeemPointsController(
+    req: Request,
+    res: Response
+): Promise<void> {
+    try {
+        const document = req.params.document as string;
+        const { points } = req.body;
+
+        const redeemed = await redeemPoints(document, points);
+
+        res.status(200).json(redeemed);
+    } catch (error) {
+        res.status(400).json({
+            error: error instanceof Error
+            ? error.message
             : 'Unknown error'
+        });
+    }
+}
+
+async function getRedemptionsController(
+    req: Request,
+    res: Response
+): Promise<void> {
+    try {
+        const document = req.params.document as string;
+
+        const redemptions = await getRedemptions(document);
+
+        res.status(200).json(redemptions);
+    } catch (error) {
+        res.status(400).json({
+            error: error instanceof Error
+                ? error.message
+                : 'Unknown error'
         });
     }
 }
@@ -89,5 +132,7 @@ export {
     getCustomercontroller,
     getPurchansesController,
     registerPurchanseController,
-    getPointscontroller
+    getPointscontroller,
+    redeemPointsController,
+    getRedemptionsController
 };

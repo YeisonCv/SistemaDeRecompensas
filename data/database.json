@@ -4,7 +4,7 @@
       "id": 1,
       "document": "1234567890",
       "name": "João Silva",
-      "points": 1501
+      "points": 500
     },
     {
       "id": 2,
@@ -68,6 +68,27 @@
       "product": "Monitor",
       "value": 1900,
       "date": "2026-08-26"
+    },
+    {
+      "id": 8,
+      "customer_id": 1,
+      "product": "Test",
+      "value": 2000,
+      "date": "2026-08-28"
+    },
+    {
+      "id": 9,
+      "customer_id": 1,
+      "product": "Laptop",
+      "value": 2500,
+      "date": "2026-08-28"
+    },
+    {
+      "id": 10,
+      "customer_id": 1,
+      "product": "PC",
+      "value": 1000000,
+      "date": "2026-08-28"
     }
   ],
   "redemptions": [
@@ -75,15 +96,8 @@
       "id": 1,
       "customer_id": 1,
       "points_used": 500,
-      "date": "2024-04-01",
-      "redeemed_value": 5000
-    },
-    {
-      "id": 2,
-      "customer_id": 2,
-      "points_used": 1000,
-      "date": "2024-04-15",
-      "redeemed_value": 100000
+      "date": "2026-08-28",
+      "redeemed_value": 50000
     }
   ]
 }

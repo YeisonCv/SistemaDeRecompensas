@@ -7,7 +7,7 @@
 
     <title>Rewards System</title>
 
-    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/style.css">
 </head>
 
 <body>
@@ -138,6 +138,59 @@
 
         </section>
 
+        <!-- Redeem points -->
+
+        <section
+            class="card"
+            id="redeemSection"
+            style="display: none;"
+        >
+
+            <h2>Redeem Points</h2>
+
+            <form id="redeemForm">
+
+                <div class="form-group">
+
+                    <label for="redeemPoints">
+                        Points to redeem
+                    </label>
+
+                    <input
+                        type="number"
+                        id="redeemPoints"
+                        placeholder="Points"
+                        min="1"
+                        step="1"
+                        required
+                    >
+
+                </div>
+
+                <button type="submit">
+                    Redeem Points
+                </button>
+
+            </form>
+
+            <p id="redeemMessage"></p>
+
+        </section>
+
+
+        <!-- Redemption history -->
+
+        <section
+            class="card"
+            id="redemptionHistorySection"
+            style="display: none;"
+        >
+
+            <h2>Redemption History</h2>
+
+            <div id="redemptionList"></div>
+
+        </section>
     </main>
 
     <script src="./js/app.js"></script>
@@ -145,3 +198,4 @@
 </body>
 
 </html>
+

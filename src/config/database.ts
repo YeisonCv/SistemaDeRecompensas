@@ -19,8 +19,9 @@ interface Purchase {
 interface Redemption {
     id: number;
     customer_id: number;
-    points_redeemed: number;
-    date: string; // Formato YYYY-MM-DD
+    points_used: number;
+    date: string;
+    redeemed_value: number;
 }
 
 interface Database {

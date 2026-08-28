@@ -4,7 +4,9 @@ import {
     getCustomercontroller,
     getPurchansesController,
     registerPurchanseController,
-    getPointscontroller
+    getPointscontroller,
+    redeemPointsController,
+    getRedemptionsController
 } from '../controller/rewardController';
 
 const router = Router();
@@ -24,9 +26,20 @@ router.get(
     getPurchansesController
 );
 
+router.get(
+    '/customer/:document/redemptions',
+    getRedemptionsController
+);
+
 router.post(
     '/customer/:document/purchases',
     registerPurchanseController
 );
+
+router.post(
+    '/customer/:document/redeem',
+    redeemPointsController
+);
+
 
 export default router;
