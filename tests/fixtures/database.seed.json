@@ -1,0 +1,40 @@
+{
+  "customers": [
+    {
+      "id": 1,
+      "document": "1234567890",
+      "name": "João Silva",
+      "points": 100
+    },
+    {
+      "id": 2,
+      "document": "9876543210",
+      "name": "Maria Oliveira",
+      "points": 2300
+    },
+    {
+      "id": 3,
+      "document": "4567890123",
+      "name": "Carlos Santos",
+      "points": 1200
+    }
+  ],
+  "purchases": [
+    {
+      "id": 1,
+      "customer_id": 1,
+      "product": "Notebook",
+      "value": 2500,
+      "date": "2024-01-15"
+    }
+  ],
+  "redemptions": [
+    {
+      "id": 1,
+      "customer_id": 1,
+      "points_used": 500,
+      "date": "2024-04-01",
+      "redeemed_value": 5000
+    }
+  ]
+}

@@ -7,7 +7,10 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "playwright test",
+    "test:api": "playwright test tests/api",
+    "test:e2e": "playwright test tests/e2e",
+    "test:report": "playwright show-report",
     "build": "tsc",
     "start": "node dist/main.js"
   },
@@ -16,6 +19,7 @@
     "typescript": "^7.0.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@types/express": "^5.0.6",
     "@types/node": "^26.4.0"
   }
