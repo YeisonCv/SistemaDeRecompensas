@@ -1,147 +1,127 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Rewards System</title>
-
-    <link rel="stylesheet" href="./css/styles.css">
+    <title>Sistema de Recompensas</title>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
-
 <body>
-
-    <main class="container">
-
+    <div class="app">
         <header class="header">
-            <h1>Rewards System</h1>
-            <p>Manage your points and purchases</p>
+            <div class="header__brand">
+                <span class="header__logo">★</span>
+                <div>
+                    <h1>Sistema de Recompensas</h1>
+                    <p>Consulta puntos y registra compras</p>
+                </div>
+            </div>
         </header>
 
-        <!-- Customer search -->
+        <main class="main">
+            <section class="card card--search">
+                <h2>Buscar cliente</h2>
+                <form id="search-form" class="search-form">
+                    <div class="field">
+                        <label for="document-input">Documento</label>
+                        <input
+                            type="text"
+                            id="document-input"
+                            name="document"
+                            placeholder="Ej: 1234567890"
+                            required
+                            autocomplete="off"
+                        >
+                    </div>
+                    <button type="submit" class="btn btn--primary" id="search-btn">
+                        Buscar
+                    </button>
+                </form>
+                <p class="hint">Clientes de prueba: 1234567890, 9876543210, 4567890123</p>
+            </section>
 
-        <section class="card">
+            <div id="message" class="message hidden" role="alert"></div>
 
-            <h2>Customer</h2>
+            <section id="customer-section" class="hidden">
+                <div class="card customer-card">
+                    <div class="customer-card__info">
+                        <h2 id="customer-name">—</h2>
+                        <p class="customer-card__doc">Doc. <span id="customer-document">—</span></p>
+                    </div>
+                    <div class="customer-card__points">
+                        <span class="customer-card__label">Puntos acumulados</span>
+                        <strong id="customer-points">0</strong>
+                    </div>
+                </div>
 
-            <div class="search-container">
+                <div class="grid">
+                    <section class="card">
+                        <h2>Registrar compra</h2>
+                        <form id="purchase-form" class="purchase-form">
+                            <div class="field">
+                                <label for="product-input">Producto</label>
+                                <input
+                                    type="text"
+                                    id="product-input"
+                                    name="product"
+                                    placeholder="Ej: Auriculares"
+                                    required
+                                >
+                            </div>
+                            <div class="field">
+                                <label for="value-input">Valor ($)</label>
+                                <input
+                                    type="number"
+                                    id="value-input"
+                                    name="value"
+                                    placeholder="Ej: 500"
+                                    min="1"
+                                    step="1"
+                                    required
+                                >
+                            </div>
+                            <p class="hint">Ganas 1 punto por cada $10 de compra.</p>
+                            <button type="submit" class="btn btn--primary" id="purchase-btn">
+                                Registrar compra
+                            </button>
+                        </form>
+                    </section>
 
-                <input
-                    type="text"
-                    id="documentInput"
-                    placeholder="Enter your document"
-                >
+                    <section class="card">
+                        <div class="card__header">
+                            <h2>Historial de compras</h2>
+                            <button type="button" class="btn btn--ghost" id="refresh-btn">
+                                Actualizar
+                            </button>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Producto</th>
+                                        <th>Valor</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="purchases-body">
+                                    <tr>
+                                        <td colspan="4" class="empty">Sin compras registradas</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </section>
+        </main>
 
-                <button id="searchButton">
-                    Search
-                </button>
-
-            </div>
-
-            <p id="searchMessage"></p>
-
-        </section>
-
-
-        <!-- Customer information -->
-
-        <section
-            class="card customer-card"
-            id="customerSection"
-            style="display: none;"
-        >
-
-            <h2 id="customerName"></h2>
-
-            <p>
-                Document:
-                <span id="customerDocument"></span>
+        <footer class="footer">
+            <p>SDR
             </p>
+        </footer>
+    </div>
 
-            <div class="points-box">
-
-                <span id="customerPoints">0</span>
-
-                <small>POINTS</small>
-
-            </div>
-
-        </section>
-
-
-        <!-- Register purchase -->
-
-        <section
-            class="card"
-            id="purchaseSection"
-            style="display: none;"
-        >
-
-            <h2>Register Purchase</h2>
-
-            <form id="purchaseForm">
-
-                <div class="form-group">
-
-                    <label for="product">
-                        Product
-                    </label>
-
-                    <input
-                        type="text"
-                        id="product"
-                        placeholder="Product name"
-                        required
-                    >
-
-                </div>
-
-                <div class="form-group">
-
-                    <label for="value">
-                        Purchase Value
-                    </label>
-
-                    <input
-                        type="number"
-                        id="value"
-                        placeholder="Purchase value"
-                        min="1"
-                        required
-                    >
-
-                </div>
-
-                <button type="submit">
-                    Register Purchase
-                </button>
-
-            </form>
-
-            <p id="purchaseMessage"></p>
-
-        </section>
-
-
-        <!-- Purchase history -->
-
-        <section
-            class="card"
-            id="historySection"
-            style="display: none;"
-        >
-
-            <h2>Purchase History</h2>
-
-            <div id="purchaseList"></div>
-
-        </section>
-
-    </main>
-
-    <script src="./js/app.js"></script>
-
+    <script src="js/app.js"></script>
 </body>
-
 </html>

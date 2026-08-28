@@ -4,7 +4,7 @@
       "id": 1,
       "document": "1234567890",
       "name": "João Silva",
-      "points": 1501
+      "points": 1731
     },
     {
       "id": 2,
@@ -68,6 +68,20 @@
       "product": "Monitor",
       "value": 1900,
       "date": "2026-08-26"
+    },
+    {
+      "id": 8,
+      "customer_id": 1,
+      "product": "Teclado",
+      "value": 300,
+      "date": "2026-08-28"
+    },
+    {
+      "id": 9,
+      "customer_id": 1,
+      "product": "Computador",
+      "value": 2000,
+      "date": "2026-08-28"
     }
   ],
   "redemptions": [

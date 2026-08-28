@@ -1,212 +1,202 @@
-const API_URL = '';
+const API_BASE = '/rewards';
 
-//Obtener los elementos html
-const documentInput = document.getElementById('documentInput');
-const searchButton = document.getElementById('searchButton');
+const elements = {
+    searchForm: document.getElementById('search-form'),
+    documentInput: document.getElementById('document-input'),
+    searchBtn: document.getElementById('search-btn'),
+    message: document.getElementById('message'),
+    customerSection: document.getElementById('customer-section'),
+    customerName: document.getElementById('customer-name'),
+    customerDocument: document.getElementById('customer-document'),
+    customerPoints: document.getElementById('customer-points'),
+    purchaseForm: document.getElementById('purchase-form'),
+    productInput: document.getElementById('product-input'),
+    valueInput: document.getElementById('value-input'),
+    purchaseBtn: document.getElementById('purchase-btn'),
+    refreshBtn: document.getElementById('refresh-btn'),
+    purchasesBody: document.getElementById('purchases-body'),
+};
 
-const customerSection = document.getElementById('customerSection');
-const purchaseSection = document.getElementById('purchaseSection');
-const historySection = document.getElementById('historySection');
+let currentDocument = null;
 
-const customerName = document.getElementById('customerName');
-const customerDocument = document.getElementById('customerDocument');
-const customerPoints = document.getElementById('customerPoints');
-
-const searchMessage = document.getElementById('searchMessage');
-
-const purchaseForm = document.getElementById('purchaseForm');
-const purchaseMessage = document.getElementById('purchaseMessage');
-
-const purchaseList = document.getElementById('purchaseList');
-
-// Buscar cliente por documento
-searchButton.addEventListener('click', searchCustomer);
-
-async function searchCustomer() {
-
-    const documentNumber = documentInput.value.trim();
-
-    if (!documentNumber) {
-        searchMessage.textContent = 'Please enter your document.';
-        return;
-    }
-
-    try {
-
-        searchMessage.textContent = 'Searching...';
-
-        const response = await fetch(
-            `${API_URL}/rewards/customer/${documentNumber}`
-        );
-
-        if (!response.ok) {
-
-            throw new Error('Customer not found');
-
-        }
-
-        const customer = await response.json();
-
-        displayCustomer(customer);
-
-        await loadPoints(documentNumber);
-
-        await loadPurchases(documentNumber);
-
-        searchMessage.textContent = '';
-
-    } catch (error) {
-
-        customerSection.style.display = 'none';
-        purchaseSection.style.display = 'none';
-        historySection.style.display = 'none';
-
-        searchMessage.textContent = error.message;
-
-    }
-}
-
-//Mostrar el cliente 
-function displayCustomer(customer) {
-
-    customerSection.style.display = 'block';
-    purchaseSection.style.display = 'block';
-    historySection.style.display = 'block';
-
-    customerName.textContent = customer.name;
-    customerDocument.textContent = customer.document;
-    customerPoints.textContent = customer.points;
-}
-
-//obtener puntos 
-async function loadPoints(documentNumber) {
-
-    const response = await fetch(
-        `${API_URL}/rewards/customer/${documentNumber}/points`
-    );
-
-    if (!response.ok) {
-        throw new Error('Could not load points');
-    }
+async function apiRequest(url, options = {}) {
+    const response = await fetch(url, {
+        headers: { 'Content-Type': 'application/json' },
+        ...options,
+    });
 
     const data = await response.json();
 
-    customerPoints.textContent = data.points;
-}
-
-//obtener compras
-async function loadPurchases(documentNumber) {
-
-    const response = await fetch(
-        `${API_URL}/rewards/customer/${documentNumber}/purchases`
-    );
-
     if (!response.ok) {
-        throw new Error('Could not load purchases');
+        throw new Error(data.error || 'Error en la solicitud');
     }
 
-    const purchases = await response.json();
-
-    displayPurchases(purchases);
+    return data;
 }
 
-//mostrar compras
-function displayPurchases(purchases) {
+function showMessage(text, type = 'error') {
+    elements.message.textContent = text;
+    elements.message.className = `message message--${type}`;
+    elements.message.classList.remove('hidden');
+}
 
-    purchaseList.innerHTML = '';
+function hideMessage() {
+    elements.message.classList.add('hidden');
+}
 
-    if (purchases.length === 0) {
+function setLoading(button, isLoading) {
+    button.disabled = isLoading;
+}
 
-        purchaseList.innerHTML =
-            '<p>No purchases registered.</p>';
+function formatCurrency(value) {
+    return new Intl.NumberFormat('es-CO', {
+        style: 'currency',
+        currency: 'COP',
+        maximumFractionDigits: 0,
+    }).format(value);
+}
 
-        return;
-    }
-
-    purchases.forEach(purchase => {
-
-        const item = document.createElement('div');
-
-        item.classList.add('purchase-item');
-
-        item.innerHTML = `
-            <strong>${purchase.product}</strong>
-            <span>Value: $${purchase.value}</span>
-            <br>
-            <span>Date: ${purchase.date}</span>
+function renderPurchases(purchases) {
+    if (!purchases.length) {
+        elements.purchasesBody.innerHTML = `
+            <tr>
+                <td colspan="4" class="empty">Sin compras registradas</td>
+            </tr>
         `;
-
-        purchaseList.appendChild(item);
-
-    });
-}
-
-//registrar compra
-purchaseForm.addEventListener(
-    'submit',
-    registerPurchase
-);
-async function registerPurchase(event) {
-
-    event.preventDefault();
-
-    const documentNumber = documentInput.value.trim();
-
-    const product = document
-        .getElementById('product')
-        .value
-        .trim();
-
-    const value = Number(
-        document.getElementById('value').value
-    );
-
-    if (!documentNumber) {
-        purchaseMessage.textContent =
-            'Please search for a customer first.';
         return;
     }
+
+    elements.purchasesBody.innerHTML = purchases
+        .slice()
+        .reverse()
+        .map((purchase) => `
+            <tr>
+                <td>${purchase.id}</td>
+                <td>${escapeHtml(purchase.product)}</td>
+                <td>${formatCurrency(purchase.value)}</td>
+                <td>${purchase.date}</td>
+            </tr>
+        `)
+        .join('');
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+async function loadCustomer(document) {
+    const [customer, pointsData, purchases] = await Promise.all([
+        apiRequest(`${API_BASE}/customer/${encodeURIComponent(document)}`),
+        apiRequest(`${API_BASE}/customer/${encodeURIComponent(document)}/points`),
+        apiRequest(`${API_BASE}/customer/${encodeURIComponent(document)}/purchases`),
+    ]);
+
+    currentDocument = document;
+
+    elements.customerName.textContent = customer.name;
+    elements.customerDocument.textContent = customer.document;
+    elements.customerPoints.textContent = pointsData.points.toLocaleString('es-CO');
+
+    renderPurchases(purchases);
+    elements.customerSection.classList.remove('hidden');
+}
+
+async function handleSearch(event) {
+    event.preventDefault();
+    hideMessage();
+
+    const document = elements.documentInput.value.trim();
+
+    if (!document) {
+        showMessage('Ingresa un número de documento.');
+        return;
+    }
+
+    setLoading(elements.searchBtn, true);
 
     try {
+        await loadCustomer(document);
+        showMessage('Cliente cargado correctamente.', 'success');
+    } catch (error) {
+        elements.customerSection.classList.add('hidden');
+        currentDocument = null;
+        showMessage(error.message);
+    } finally {
+        setLoading(elements.searchBtn, false);
+    }
+}
 
-        const response = await fetch(
-            `${API_URL}/rewards/customer/${documentNumber}/purchases`,
+async function handlePurchase(event) {
+    event.preventDefault();
+    hideMessage();
+
+    if (!currentDocument) {
+        showMessage('Primero busca un cliente.');
+        return;
+    }
+
+    const product = elements.productInput.value.trim();
+    const value = Number(elements.valueInput.value);
+
+    if (!product) {
+        showMessage('Ingresa el nombre del producto.');
+        return;
+    }
+
+    if (!value || value <= 0) {
+        showMessage('Ingresa un valor válido mayor a 0.');
+        return;
+    }
+
+    setLoading(elements.purchaseBtn, true);
+
+    try {
+        const result = await apiRequest(
+            `${API_BASE}/customer/${encodeURIComponent(currentDocument)}/purchases`,
             {
                 method: 'POST',
-
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-
-                body: JSON.stringify({
-                    product,
-                    value
-                })
+                body: JSON.stringify({ product, value }),
             }
         );
 
-        const data = await response.json();
+        elements.customerPoints.textContent = result.totalPoints.toLocaleString('es-CO');
+        elements.productInput.value = '';
+        elements.valueInput.value = '';
 
-        if (!response.ok) {
-            throw new Error(
-                data.error || 'Could not register purchase'
-            );
-        }
+        const purchases = await apiRequest(
+            `${API_BASE}/customer/${encodeURIComponent(currentDocument)}/purchases`
+        );
+        renderPurchases(purchases);
 
-        purchaseMessage.textContent =
-            `Purchase registered! You earned ${data.pointsEarned} point(s).`;
-
-        customerPoints.textContent =
-            data.totalPoints;
-
-        purchaseForm.reset();
-
-        await loadPurchases(documentNumber);
-
+        showMessage(
+            `Compra registrada. Ganaste ${result.pointsEarned} puntos.`,
+            'success'
+        );
     } catch (error) {
-
-        purchaseMessage.textContent =
-            error.message;
-
+        showMessage(error.message);
+    } finally {
+        setLoading(elements.purchaseBtn, false);
     }
 }
+
+async function handleRefresh() {
+    if (!currentDocument) return;
+
+    hideMessage();
+    setLoading(elements.refreshBtn, true);
+
+    try {
+        await loadCustomer(currentDocument);
+        showMessage('Historial actualizado.', 'success');
+    } catch (error) {
+        showMessage(error.message);
+    } finally {
+        setLoading(elements.refreshBtn, false);
+    }
+}
+
+elements.searchForm.addEventListener('submit', handleSearch);
+elements.purchaseForm.addEventListener('submit', handlePurchase);
+elements.refreshBtn.addEventListener('click', handleRefresh);

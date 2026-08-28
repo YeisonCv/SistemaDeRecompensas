@@ -67,14 +67,15 @@ async function registerPurchanseController(
     req: Request,
     res: Response
 ): Promise<void> {
-    try{
-    const { document, product, value } = req.body;
+    try {
+        const document = req.params.document as string;
+        const { product, value } = req.body;
 
-    const purchase = await registerPurchase(
-        document, 
-        product, 
-        value
-    );
+        const purchase = await registerPurchase(
+            document,
+            product,
+            Number(value)
+        );
     res.status(200).json(purchase);
     } catch (error) {
         res.status(400).json({ 
