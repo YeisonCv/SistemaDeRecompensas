@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Rewards System</title>
+
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+
+<body>
+
+    <main class="container">
+
+        <header class="header">
+            <h1>Rewards System</h1>
+            <p>Manage your points and purchases</p>
+        </header>
+
+        <!-- Customer search -->
+
+        <section class="card">
+
+            <h2>Customer</h2>
+
+            <div class="search-container">
+
+                <input
+                    type="text"
+                    id="documentInput"
+                    placeholder="Enter your document"
+                >
+
+                <button id="searchButton">
+                    Search
+                </button>
+
+            </div>
+
+            <p id="searchMessage"></p>
+
+        </section>
+
+
+        <!-- Customer information -->
+
+        <section
+            class="card customer-card"
+            id="customerSection"
+            style="display: none;"
+        >
+
+            <h2 id="customerName"></h2>
+
+            <p>
+                Document:
+                <span id="customerDocument"></span>
+            </p>
+
+            <div class="points-box">
+
+                <span id="customerPoints">0</span>
+
+                <small>POINTS</small>
+
+            </div>
+
+        </section>
+
+
+        <!-- Register purchase -->
+
+        <section
+            class="card"
+            id="purchaseSection"
+            style="display: none;"
+        >
+
+            <h2>Register Purchase</h2>
+
+            <form id="purchaseForm">
+
+                <div class="form-group">
+
+                    <label for="product">
+                        Product
+                    </label>
+
+                    <input
+                        type="text"
+                        id="product"
+                        placeholder="Product name"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="value">
+                        Purchase Value
+                    </label>
+
+                    <input
+                        type="number"
+                        id="value"
+                        placeholder="Purchase value"
+                        min="1"
+                        required
+                    >
+
+                </div>
+
+                <button type="submit">
+                    Register Purchase
+                </button>
+
+            </form>
+
+            <p id="purchaseMessage"></p>
+
+        </section>
+
+
+        <!-- Purchase history -->
+
+        <section
+            class="card"
+            id="historySection"
+            style="display: none;"
+        >
+
+            <h2>Purchase History</h2>
+
+            <div id="purchaseList"></div>
+
+        </section>
+
+    </main>
+
+    <script src="./js/app.js"></script>
+
+</body>
+
+</html>
