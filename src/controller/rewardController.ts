@@ -21,7 +21,7 @@ async function getCustomercontroller(
         res.status(400).json({ 
             error: error instanceof Error 
             ? error.message 
-            : 'Unknown error'
+            : 'Error desconocido'
         });
     }
 }
@@ -39,7 +39,7 @@ async function getPointscontroller(
         res.status(400).json({
             error: error instanceof Error
             ? error.message
-            : 'Unknown error'
+            : 'Error desconocido'
         });
     }
 }
@@ -58,7 +58,7 @@ async function getPurchansesController(
         res.status(400).json({ 
             error: error instanceof Error 
             ? error.message 
-            : 'Unknown error'
+            : 'Error desconocido'
         });
     }
 }
@@ -81,7 +81,7 @@ async function registerPurchanseController(
         res.status(400).json({ 
             error: error instanceof Error 
             ? error.message 
-            : 'Unknown error'
+            : 'Error desconocido'
         });
     }
 }

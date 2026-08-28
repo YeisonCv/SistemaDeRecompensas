@@ -18,7 +18,7 @@ async function getCustomer( document: string){
     );
     
     if (!customer) {
-        throw new Error('Customer not found');
+        throw new Error('Cliente no encontrado');
     }
     return customer;
 }
@@ -45,7 +45,7 @@ async function registerPurchase(
     );
 
     if(!customer) {
-        throw new Error('Customer not found');
+        throw new Error('Cliente no encontrado');
     }
 
     const pointsEarned = calculatePoints(value);
@@ -77,7 +77,7 @@ async function getPurchases(document: string) {
     )
 
     if(!customer) {
-        throw new Error('Customer not found');
+        throw new Error('Cliente no encontrado');
     }
     return database.purchases.filter(
         purchase => purchase.customer_id === customer.id
