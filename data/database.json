@@ -4,7 +4,11 @@
       "id": 1,
       "document": "1234567890",
       "name": "João Silva",
+<<<<<<< HEAD
       "points": 500
+=======
+      "points": 523
+>>>>>>> d5091cfbb32ba292ae95bff815e8b5333a604bdb
     },
     {
       "id": 2,
@@ -89,6 +93,27 @@
       "product": "silla",
       "value": 4000,
       "date": "2026-08-28"
+    },
+    {
+      "id": 4,
+      "customer_id": 1,
+      "product": "Computador",
+      "value": 600,
+      "date": "2026-09-02"
+    },
+    {
+      "id": 5,
+      "customer_id": 1,
+      "product": "silla",
+      "value": 1000,
+      "date": "2026-09-02"
+    },
+    {
+      "id": 6,
+      "customer_id": 1,
+      "product": "Aro",
+      "value": 2000,
+      "date": "2026-09-02"
     }
   ],
   "redemptions": [

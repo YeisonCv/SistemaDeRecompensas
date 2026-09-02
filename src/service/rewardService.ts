@@ -1,19 +1,24 @@
-import {
-    readDatabase,
-    writeDatabase
+import { 
+    readDatabase, 
+    writeDatabase, 
+    Customer, 
+    Purchase 
 } from '../config/database';
 
 import {
-    calculatePoints,
-    calculateRedeemedPoints
+    calculatePoints
 } from '../utils/points';
 
+import {
+    validateDocument,
+    validatePurchaseData
+} from '../utils/validation';
 
-async function getCustomer(document: string) {
-
-    const database = await readDatabase();
-
-    const customer = database.customers.find(
+function findCustomerByDocument(
+    customers: Customer[],
+    document: string
+): Customer {
+    const customer = customers.find(
         customer => customer.document === document
     );
 
@@ -24,151 +29,76 @@ async function getCustomer(document: string) {
     return customer;
 }
 
-
-async function getPoints(document: string) {
-
-    const customer = await getCustomer(document);
-
-    return {
-        document: customer.document,
-        name: customer.name,
-        points: customer.points
-    };
+async function getCustomer( document: string){
+    const validDocument = validateDocument(document);
+    const database = await readDatabase();
+    
+    return findCustomerByDocument(database.customers, validDocument);
 }
 
+async function getPoints(document: string) {
+    const customer = await getCustomer(document);
+
+    return { 
+        document: customer.document,
+        name : customer.name,
+        points: customer.points 
+    }; 
+}
 
 async function registerPurchase(
-    document: string,
-    product: string,
-    value: number
+    document: string, 
+    product: unknown, 
+    value: unknown
 ) {
-
+    const validDocument = validateDocument(document);
+    const purchaseData = validatePurchaseData(product, value);
     const database = await readDatabase();
 
-    const customer = database.customers.find(
-        customer => customer.document === document
+    const customer = findCustomerByDocument(
+        database.customers,
+        validDocument
     );
 
-    if (!customer) {
-        throw new Error('Cliente no encontrado');
-    }
+    const pointsEarned = calculatePoints(purchaseData.value);
 
-    const pointsEarned = calculatePoints(value);
-
-    const newPurchase = {
+    const newPurchanse = {
         id: database.purchases.length + 1,
         customer_id: customer.id,
-        product,
-        value,
-        date: new Date().toLocaleDateString('sv-SE')
+        product: purchaseData.product,
+        value: purchaseData.value,
+        date: new Date().toLocaleDateString('sv-SE') // Formato YYYY-MM-DD [en-US (EE. UU.): 8/26/2026 (MM/DD/YYYY), es-ES (España/Latam): 26/8/2026 (DD/MM/YYYY), sv-SE (Suecia): 2026-08-26 (YYYY-MM-DD)]
     };
 
-    database.purchases.push(newPurchase);
-
+    database.purchases.push(newPurchanse);
     customer.points += pointsEarned;
-
     await writeDatabase(database);
-
+    
     return {
-        purchase: newPurchase,
+        purchase: newPurchanse,
         pointsEarned,
         totalPoints: customer.points
     };
 }
 
-
 async function getPurchases(document: string) {
-
+    const validDocument = validateDocument(document);
     const database = await readDatabase();
 
-    const customer = database.customers.find(
-        customer => customer.document === document
+    const customer = findCustomerByDocument(
+        database.customers,
+        validDocument
     );
-
-    if (!customer) {
-        throw new Error('Cliente no encontrado');
-    }
 
     return database.purchases.filter(
         purchase => purchase.customer_id === customer.id
     );
 }
-
-
-async function getRedemptions(document: string) {
-
-    const database = await readDatabase();
-
-    const customer = database.customers.find(
-        customer => customer.document === document
-    );
-
-    if (!customer) {
-        throw new Error('Cliente no encontrado');
-    }
-
-    return database.redemptions.filter(
-        redemption => redemption.customer_id === customer.id
-    );
-}
-
-
-async function redeemPoints(
-    customerId: string,
-    points: number
-) {
-
-    const database = await readDatabase();
-
-    const customer = database.customers.find(
-        customer => customer.document === customerId
-    );
-
-    if (!customer) {
-        throw new Error('Cliente no encontrado');
-    }
-
-    if (!Number.isInteger(points) || points <= 0) {
-        throw new Error(
-            'Points to redeem must be a positive integer'
-        );
-    }
-
-    if (points >= customer.points) {
-        throw new Error('Insufficient points');
-    }
-
-    customer.points -= points;
-
-    const value = calculateRedeemedPoints(points);
-
-    const newRedemption = {
-        id: database.redemptions.length + 1,
-        customer_id: customer.id,
-        points_used: points,
-        points_redeemed: points,
-        date: new Date().toLocaleDateString('sv-SE'),
-        redeemed_value: value
-    };
-
-    database.redemptions.push(newRedemption);
-
-    await writeDatabase(database);
-
-    return {
-        redemption: newRedemption,
-        pointsRedeemed: points,
-        valueRedeemed: value,
-        remainingPoints: customer.points
-    };
-}
-
-
-export {
+  
+export{
     getCustomer,
     getPoints,
     registerPurchase,
     getPurchases,
-    getRedemptions,
-    redeemPoints
+    findCustomerByDocument
 };
