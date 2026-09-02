@@ -9,18 +9,31 @@ import {
     calculatePoints
 } from '../utils/points';
 
+import {
+    validateDocument,
+    validatePurchaseData
+} from '../utils/validation';
 
-async function getCustomer( document: string){
-    const database = await readDatabase();
-    
-    const customer = database.customers.find(
+function findCustomerByDocument(
+    customers: Customer[],
+    document: string
+): Customer {
+    const customer = customers.find(
         customer => customer.document === document
     );
-    
+
     if (!customer) {
         throw new Error('Cliente no encontrado');
     }
+
     return customer;
+}
+
+async function getCustomer( document: string){
+    const validDocument = validateDocument(document);
+    const database = await readDatabase();
+    
+    return findCustomerByDocument(database.customers, validDocument);
 }
 
 async function getPoints(document: string) {
@@ -35,26 +48,25 @@ async function getPoints(document: string) {
 
 async function registerPurchase(
     document: string, 
-    product: string, 
-    value: number
+    product: unknown, 
+    value: unknown
 ) {
+    const validDocument = validateDocument(document);
+    const purchaseData = validatePurchaseData(product, value);
     const database = await readDatabase();
 
-    const customer = database.customers.find(
-        customer => customer.document === document
+    const customer = findCustomerByDocument(
+        database.customers,
+        validDocument
     );
 
-    if(!customer) {
-        throw new Error('Cliente no encontrado');
-    }
-
-    const pointsEarned = calculatePoints(value);
+    const pointsEarned = calculatePoints(purchaseData.value);
 
     const newPurchanse = {
         id: database.purchases.length + 1,
         customer_id: customer.id,
-        product,
-        value,
+        product: purchaseData.product,
+        value: purchaseData.value,
         date: new Date().toLocaleDateString('sv-SE') // Formato YYYY-MM-DD [en-US (EE. UU.): 8/26/2026 (MM/DD/YYYY), es-ES (España/Latam): 26/8/2026 (DD/MM/YYYY), sv-SE (Suecia): 2026-08-26 (YYYY-MM-DD)]
     };
 
@@ -70,15 +82,14 @@ async function registerPurchase(
 }
 
 async function getPurchases(document: string) {
+    const validDocument = validateDocument(document);
     const database = await readDatabase();
 
-    const customer = database.customers.find(
-        customer => customer.document === document
-    )
+    const customer = findCustomerByDocument(
+        database.customers,
+        validDocument
+    );
 
-    if(!customer) {
-        throw new Error('Cliente no encontrado');
-    }
     return database.purchases.filter(
         purchase => purchase.customer_id === customer.id
     );
@@ -88,5 +99,6 @@ export{
     getCustomer,
     getPoints,
     registerPurchase,
-    getPurchases
+    getPurchases,
+    findCustomerByDocument
 };

@@ -74,7 +74,7 @@ async function registerPurchanseController(
         const purchase = await registerPurchase(
             document,
             product,
-            Number(value)
+            value
         );
     res.status(200).json(purchase);
     } catch (error) {
