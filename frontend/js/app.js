@@ -439,7 +439,6 @@ async function handleRedeem(event) {
     }
 }
 
-<<<<<<< HEAD
 
 // Refresh
 
@@ -500,8 +499,3 @@ elements.refreshBtn.addEventListener(
     'click',
     handleRefresh
 );
-=======
-elements.searchForm.addEventListener('submit', handleSearch);
-elements.purchaseForm.addEventListener('submit', handlePurchase);
-elements.refreshBtn.addEventListener('click', handleRefresh);
->>>>>>> d5091cfbb32ba292ae95bff815e8b5333a604bdb

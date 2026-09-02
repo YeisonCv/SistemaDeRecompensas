@@ -3,15 +3,11 @@ const POINTS_PER_CURRENCY = 1000;
 const REDEEM_VALUE_PER_POINT = 100;
 
 function calculatePoints(value: number): number {
-<<<<<<< HEAD
-    return Math.floor(value / 1000);
-=======
     if (value < MIN_PURCHASE_VALUE) {
         return 0;
     }
 
     return Math.floor(value / POINTS_PER_CURRENCY);
->>>>>>> d5091cfbb32ba292ae95bff815e8b5333a604bdb
 }
 
 function validateRedemption(points: number, currentBalance: number): void {

@@ -3,7 +3,13 @@ function validateDocument(document: unknown): string {
         throw new Error('El documento es obligatorio');
     }
 
-    return document.trim();
+    const cleanDocument = document.trim();
+
+    if (!/^\d+$/.test(cleanDocument)) {
+        throw new Error('El documento solo debe contener números');
+    }
+
+    return cleanDocument;
 }
 
 function validatePurchaseData(
